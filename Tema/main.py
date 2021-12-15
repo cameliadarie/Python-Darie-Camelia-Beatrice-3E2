@@ -81,13 +81,13 @@ def imare(lista):
 def validare_comanda(lista_fisiere, lista_argumente):
     argumente_posibile = ["-r", "-R", "--recursive", "-i", "-I", "--verbose", "--help", "--version", "-f", "--force",
                           "--interactive[always]", "--interactive[never]", "--interactive[once]", "-v",
-                          "--no-preserve-root", "-d", "--dir"]
+                          "--no-preserve-root", "-d", "--dir", "--root-preserve"]
     for i in range(0, len(lista_argumente)):
         if lista_argumente[i] not in argumente_posibile:
             return 0
-    if ("--help" not in lista_argumente or "--version" not in lista_argumente
-                                    or "--no-preserve-root" not in lista_argumente) and len(lista_fisiere)==0:
-        return 2
+    if ("--help" not in lista_argumente and "--version" not in lista_argumente and "--no-preserve-root" not in lista_argumente):
+        if len(lista_fisiere)==0:
+         return 2
     return 1
 
 
@@ -114,6 +114,7 @@ def citire_comanda():
             lista_argumente.append(sys.argv[i])
         if a == "-r" or a == "--recursive" or a == "-R":
             rec = 1
+    print(lista_argumente)
     if validare_comanda(lista_fisiere, lista_argumente) == 0:
         print("Argumentele date sunt invalide")
         return 0
@@ -173,6 +174,8 @@ def citire_comanda():
                 help()
             elif i == '--version':
                 versions()
+            elif i=='--root-preserve' and '/' in lista_fisiere:
+                print("Daca doriti sa continuati, folositi no root preserve")
         if len(lista_argumente)==0:
                 for a in lista_fisiere:
                     os.remove(a)
