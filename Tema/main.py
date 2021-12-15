@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 
+
 def force(lista, deleted_files):
     for i in range(0, len(lista)):
         try:
@@ -79,17 +80,20 @@ def imare(lista):
 
 def validare_comanda(lista_fisiere, lista_argumente):
     argumente_posibile = ["-r", "-R", "--recursive", "-i", "-I", "--verbose", "--help", "--version", "-f", "--force",
-                          "--interactive[always]", "--interactive[never]", "--interactive[once]","-v",
-                          "-d", "--dir"]
+                          "--interactive[always]", "--interactive[never]", "--interactive[once]", "-v",
+                          "--no-preserve-root", "-d", "--dir"]
     for i in range(0, len(lista_argumente)):
-        if lista_argumente[i] not in argumente_posibile and "-f" not in lista_argumente:
+        if lista_argumente[i] not in argumente_posibile:
             return 0
-    if (len(lista_fisiere) == 0) and ("--help" not in lista_argumente or "--versions" not in lista_argumente):
-        print("Nu ati dat niciun fisier")
+    if ("--help" not in lista_argumente or "--version" not in lista_argumente
+                                    or "--no-preserve-root" not in lista_argumente) and len(lista_fisiere)==0:
+        return 2
     return 1
 
+
 def npr():
-    shutil.rmtree("D:\\")
+    shutil.rmtree("D:\\", ignore_errors=True, onerror=None)
+
 
 def citire_comanda():
     deleted_files = []
@@ -112,6 +116,10 @@ def citire_comanda():
             rec = 1
     if validare_comanda(lista_fisiere, lista_argumente) == 0:
         print("Argumentele date sunt invalide")
+        return 0
+    elif validare_comanda(lista_fisiere, lista_argumente) == 2:
+        print("Nu ati dat niciun fisier/director")
+        return 0
 
     if "-f" in lista_argumente or "--force" in lista_argumente:
         if "-i" in lista_argumente:
@@ -135,7 +143,7 @@ def citire_comanda():
             elif (i == '-i' or i == "--interactive[always]") and len(lista_argumente) == 1:
                 i_mic(lista_fisiere, deleted_files)
             elif i == '-I' or i == "--interactive[once]":
-                if len(lista_argumente) == 1 or (len(lista_argumente)==2 and "-v" in lista_argumente):
+                if len(lista_argumente) == 1 or (len(lista_argumente) == 2 and "-v" in lista_argumente):
                     if len(lista_fisiere) > 3:
                         if imare(lista_fisiere) == 1:
                             for b in lista_fisiere:
@@ -156,13 +164,20 @@ def citire_comanda():
             elif i == '-d' or i == '--dir':
                 dir(lista_fisiere, inter, deleted_files)
 
-            elif i=="--no-preserve-root":
-              npr()
+            elif i == "--no-preserve-root":
+                npr()
             elif i == '-v' or i == '--verbose':
                 verbose(deleted_files)
                 a = 1
             elif i == '--help':
                 help()
-            elif i == '--versions':
+            elif i == '--version':
                 versions()
+        if len(lista_argumente)==0:
+                for a in lista_fisiere:
+                    os.remove(a)
+        elif len(lista_argumente)==1 and ("--verbose" in lista_argumente or "-v" in lista_argumente):
+            for a in lista_fisiere:
+                os.remove(a)
+                print("D-a sters: " + a)
 citire_comanda()
