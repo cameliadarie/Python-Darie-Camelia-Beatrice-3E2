@@ -33,18 +33,13 @@ OPTIONS         top
               prompt according to WHEN: never, once (-I), or always
               (-i); without WHEN, prompt always
 
-       --one-file-system
-              when removing a hierarchy recursively, skip any directory
-              that is on a file system different from that of the
-              corresponding command line argument
 
        --no-preserve-root
               do not treat '/' specially
 
-       --preserve-root[=all]
-              do not remove '/' (default); with 'all', reject any
-              command line argument on a separate device from its parent
-
+       --preserve-root
+              do not remove '/' (default)
+              
        -r, -R, --recursive
               remove directories and their contents recursively
 
